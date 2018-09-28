@@ -8,7 +8,7 @@ variable "aws_region" {
 }
 
 variable "subnet_id" {
-  description = "An existing subnet where this EC2 instance should be provisioned"
+  description = "An existing subnet id where this EC2 instance should be provisioned"
 }
 
 variable "environment" {

@@ -9,7 +9,7 @@ data "aws_subnet" "selected" {
 resource "aws_instance" "ubuntu" {
   ami           = "${var.ami_id[var.aws_region]}"
   instance_type = "${var.instance_type}"
-  subnet_id	= "${var.subnet_id}"
+  subnet_id	= "${data.aws_subnet.selected.id}"
 
   tags {
     Env = "${var.environment}"

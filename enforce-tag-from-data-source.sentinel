@@ -1,0 +1,30 @@
+import "tfplan"
+
+# Get all aws_instance resources from all modules
+get_aws_instances = func() {
+    aws_instances = []
+    for tfplan.module_paths as path {
+      aws_instances += values(tfplan.module(path).resources.aws_instance) else []
+    }
+    return aws_instances
+}
+
+aws_instances = get_aws_instances()
+
+# Get aws_subnet Env tag value
+get_subnet_env = func() {
+    return ( tfplan.state.data.aws_subnet.selected[0].attr.tags["Env"] )
+}
+
+#Ensure Env tag from each aws_instance matches that of aws_subnet
+validate_vm_tags_from_subnet = rule {
+  all aws_instances as _, instances { 
+    all instances as index, ec2 {
+      ec2.applied.tags["Env"] == get_subnet_env()
+    }
+  }
+}
+
+main = rule {
+  (validate_vm_tags_from_subnet) else true
+}
